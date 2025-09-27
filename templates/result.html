@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('lang','en') }}">
+<head>
+    <meta charset="UTF-8">
+    <title>Survey Result</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+    body {
+        background-image: url('/static/images/healthcare_bg.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        font-family: 'Poppins', sans-serif;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 30px;
+        background: rgba(255,255,255,0.95);
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 600;
+        color: #0d6efd;
+        margin-bottom: 25px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 2px solid #0d6efd;
+        display: inline-block;
+        padding-bottom: 5px;
+    }
+
+    .section {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-left: 5px solid #0d6efd;
+        background: #f9f9f9;
+        border-radius: 10px;
+    }
+
+    .risk-low { color: #28a745; font-weight: 600; }
+    .risk-moderate { color: #ffc107; font-weight: 600; }
+    .risk-high { color: #dc3545; font-weight: 600; }
+
+    .xray-img {
+        max-width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        margin-top: 10px;
+    }
+
+    .flash {
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 12px;
+        font-weight: 500;
+    }
+    .flash-success { background-color: #d4edda; color: #155724; }
+    .flash-warning { background-color: #fff3cd; color: #856404; }
+    .flash-danger { background-color: #f8d7da; color: #721c24; }
+
+    button, .btn-link {
+        background: #0d6efd;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        font-size: 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+    }
+    button:hover, .btn-link:hover {
+        background: #0b5ed7;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    input[type="file"] {
+        display: block;
+        margin: 10px 0 20px 0;
+    }
+
+    .center-button {
+        text-align: center;
+    }
+
+    a {
+        color: #0d6efd;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Survey Result</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+            <div class="flash flash-{{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Risk Level & Suggestion -->
+    <div class="section">
+        <p><b>Risk Level:</b>
+            <span class="risk-{{ survey.risk }}">{{ survey.risk|capitalize }}</span>
+        </p>
+        <p><b>Suggestion:</b> {{ survey.suggestion }}</p>
+    </div>
+
+    <!-- X-ray Upload Section -->
+    <div class="section">
+        {% if survey.risk in ['low','moderate'] %}
+            {% if not survey.xray_uploaded %}
+                <div style="background:#fff3cd; padding:10px; border-left:5px solid #ffc107; border-radius:8px; margin-bottom:10px;">
+                    <b>{{ survey.risk|capitalize }} Risk Detected – Recommended X-ray:</b> Uploading a chest X-ray is optional but recommended for confirmation.
+                </div>
+                <form action="{{ url_for('upload_xray') }}" method="post" enctype="multipart/form-data">
+                    <label for="xray_file"><b>Optional: Upload Chest X-ray:</b></label><br>
+                    <input type="file" name="xray_file" accept="image/*" required>
+                    <button type="submit">Upload & Predict</button>
+                </form>
+            {% else %}
+                <div style="background:#d1ecf1; padding:10px; border-left:5px solid #17a2b8; border-radius:8px; margin-bottom:10px;">
+                    ✅ X-ray already uploaded.
+                </div>
+                <img class="xray-img" src="{{ url_for('serve_upload', fname=survey.xray_uploaded) }}" alt="Uploaded X-ray">
+                <p><b>Prediction:</b> {{ survey.xray_prediction }} ({{ survey.ml_conf }}%)</p>
+            {% endif %}
+        {% elif survey.risk == 'high' %}
+            {% if not survey.xray_uploaded %}
+                <div style="background:#f8d7da; padding:10px; border-left:5px solid #dc3545; border-radius:8px; margin-bottom:10px;">
+                    ⚠️ High Risk Detected – Mandatory X-ray: Uploading a chest X-ray is required to confirm your condition.
+                </div>
+                <form action="{{ url_for('upload_xray') }}" method="post" enctype="multipart/form-data">
+                    <label for="xray_file"><b>Upload Chest X-ray:</b></label><br>
+                    <input type="file" name="xray_file" accept="image/*" required>
+                    <button type="submit">Upload & Predict</button>
+                </form>
+            {% else %}
+                <div style="background:#d1ecf1; padding:10px; border-left:5px solid #17a2b8; border-radius:8px; margin-bottom:10px;">
+                    ✅ X-ray uploaded successfully.
+                </div>
+                <img class="xray-img" src="{{ url_for('serve_upload', fname=survey.xray_uploaded) }}" alt="Uploaded X-ray">
+                <p><b>Prediction:</b> {{ survey.xray_prediction }} ({{ survey.ml_conf }}%)</p>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- Download PDF Report -->
+    <div class="section center-button">
+        <form method="post">
+            <button type="submit">Download PDF Report</button>
+        </form>
+    </div>
+
+    <!-- Back to Dashboard -->
+    <div class="section center-button">
+        <a href="{{ url_for('dashboard') }}" class="btn-link">⬅ Back to Dashboard</a>
+    </div>
+</div>
+</body>
+</html>

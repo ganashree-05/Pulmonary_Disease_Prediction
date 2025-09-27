@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="home-overlay text-center">
+    <h2 class="mb-3">Welcome to Pulmonary Disease Prediction</h2>
+    <p>Select your preferred language:</p>
+
+    <form method="post" action="{{ url_for('set_lang') }}" class="d-inline-block mt-3">
+        <select name="lang" class="form-select mx-auto" style="max-width:300px;">
+            {% for l in langs %}
+                <option value="{{ l }}" {% if l==lang %}selected{% endif %}>{{ l|upper }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-primary mt-2">Set Language</button>
+    </form>
+
+    {% if session.get('user_id') %}
+        <a class="btn btn-success mt-3" href="{{ url_for('general') }}">Start Survey</a>
+    {% else %}
+        <p class="mt-3">
+            Please <a href="{{ url_for('login') }}">login</a> or
+            <a href="{{ url_for('register') }}">register</a> to continue.
+        </p>
+    {% endif %}
+</div>
+
+<style>
+    body {
+        background: url("{{ url_for('static', filename='images/healthcare_bg.jpg') }}") no-repeat center center fixed;
+        background-size: cover;
+        font-family: Arial, sans-serif;
+    }
+    .home-overlay {
+        background: rgba(0, 0, 0, 0.6); /* Dark transparent overlay */
+        padding: 40px;
+        border-radius: 15px;
+        color: white;
+        max-width: 600px;
+        margin: 80px auto;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+    h2 {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+</style>
+
+{% endblock %}
