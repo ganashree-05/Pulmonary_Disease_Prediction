@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% block content %}
+
+<div class="about-section text-center">
+    <h2 class="mb-4">About Pulmonary Disease Prediction</h2>
+    <p>
+        Pulmonary diseases such as <strong>Pneumonia</strong>, <strong>TB</strong>, and <strong>Bronchitis</strong>
+        are major health concerns worldwide. Early diagnosis plays a vital role in preventing complications.
+    </p>
+    <p>
+        This system combines <strong>symptom-based surveys</strong> and <strong>chest X-ray image analysis</strong>
+        to predict the likelihood of pulmonary disease using advanced Machine Learning and Deep Learning techniques.
+    </p>
+    <p>
+        The goal is to provide a reliable, accessible, and user-friendly tool that helps
+        patients and doctors make informed healthcare decisions.
+    </p>
+</div>
+
+<style>
+body {
+    background: url("{{ url_for('static', filename='images/healthcare_bg.jpg') }}") no-repeat center center fixed;
+    background-size: cover;
+    font-family: Arial, sans-serif;
+}
+
+.about-section {
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    max-width: 800px;
+    margin: 100px auto;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    text-align: justify;
+    line-height: 1.6;
+}
+
+.about-section h2 {
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+</style>
+
+{% endblock %}
