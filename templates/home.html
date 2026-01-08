@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="home-container">
+    <div class="home-text-left">
+
+        <!-- Disease Description -->
+        <p class="disease-text">
+            Pneumonia is a serious lung infection that inflames the air sacs in the lungs.
+            It can be caused by bacteria, viruses, or fungi and affects normal breathing.
+            Early detection plays a vital role in preventing severe complications.
+            This system assists in identifying pulmonary diseases using surveys and X-ray analysis.
+        </p>
+
+        <!-- Start Button -->
+        {% if session.get('user_id') %}
+            <a href="{{ url_for('general') }}" class="btn btn-success mt-4">
+                Start Survey
+            </a>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="btn btn-success mt-4">
+                Start Survey
+            </a>
+        {% endif %}
+
+    </div>
+</div>
+
+<style>
+    body {
+        background: url("{{ url_for('static', filename='images/healthcare_bg.jpg') }}") no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Poppins', Arial, sans-serif;
+        margin: 0;
+    }
+
+    .home-container {
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        padding-left: 60px;
+    }
+
+    .home-text-left {
+        max-width: 600px;
+    }
+
+    .disease-text {
+        font-size: 1.6rem; /* slightly bigger letters */
+        line-height: 1.8;
+        font-weight: 500;
+        color: #000000; /* black letters */
+    }
+
+    .btn-success {
+        padding: 12px 30px;
+        font-size: 1.2rem; /* slightly bigger button */
+        font-weight: 600;
+        border-radius: 6px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .home-container {
+            justify-content: center;
+            padding: 20px;
+        }
+        .home-text-left {
+            text-align: center;
+        }
+    }
+</style>
+
+{% endblock %}

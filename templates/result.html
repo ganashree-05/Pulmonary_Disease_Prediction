@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% block title %}Survey Result{% endblock %}
+
+{% block content %}
+<style>
+body {
+    background-image: url('/static/images/healthcare_bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+h2 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #0d6efd;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #0d6efd;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-left: 5px solid #0d6efd;
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+.risk-low { color: #28a745; font-weight: 600; }
+.risk-moderate { color: #ffc107; font-weight: 600; }
+.risk-high { color: #dc3545; font-weight: 600; }
+
+.xray-img {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    margin-top: 10px;
+}
+
+button, .btn-link {
+    background: #0d6efd;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+}
+button:hover, .btn-link:hover {
+    background: #0b5ed7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+input[type="file"] {
+    display: block;
+    margin: 10px 0 20px 0;
+}
+
+.center-button {
+    text-align: center;
+}
+
+a {
+    color: #0d6efd;
+    text-decoration: none;
+    font-weight: 500;
+}
+a:hover {
+    text-decoration: underline;
+}
+</style>
+
+<div class="container">
+    {% if session.lang == 'en' %}
+        <h2>Survey Result</h2>
+    {% elif session.lang == 'hi' %}
+        <h2>सर्वेक्षण परिणाम</h2>
+    {% elif session.lang == 'kn' %}
+        <h2>ಸಮೀಕ್ಷಾ ಫಲಿತಾಂಶ</h2>
+    {% endif %}
+
+    <!-- Risk Level & Suggestion -->
+    <div class="section">
+        {% if session.lang == 'en' %}
+            <p><b>Risk Level:</b> <span class="risk-{{ survey.risk }}">{{ survey.risk|capitalize }}</span></p>
+            <p><b>Suggestion:</b> {{ survey.suggestion }}</p>
+        {% elif session.lang == 'hi' %}
+            <p><b>जोखिम स्तर:</b> <span class="risk-{{ survey.risk }}">{{ survey.risk|capitalize }}</span></p>
+            <p><b>सुझाव:</b> {{ survey.suggestion }}</p>
+        {% elif session.lang == 'kn' %}
+            <p><b>ಅಪಾಯದ ಮಟ್ಟ:</b> <span class="risk-{{ survey.risk }}">{{ survey.risk|capitalize }}</span></p>
+            <p><b>ಸಲಹೆ:</b> {{ survey.suggestion }}</p>
+        {% endif %}
+    </div>
+
+    <!-- X-ray Upload Section -->
+    <div class="section">
+        {% if survey.risk in ['low','moderate'] %}
+            {% if not survey.xray_uploaded %}
+                {% if session.lang == 'en' %}
+                    <div style="background:#fff3cd; padding:10px; border-left:5px solid #ffc107; border-radius:8px;">
+                        <b>{{ survey.risk|capitalize }} Risk Detected – Recommended X-ray:</b> Uploading a chest X-ray is optional but recommended for confirmation.
+                    </div>
+                {% elif session.lang == 'hi' %}
+                    <div style="background:#fff3cd; padding:10px; border-left:5px solid #ffc107; border-radius:8px;">
+                        <b>{{ survey.risk|capitalize }} जोखिम पाया गया – अनुशंसित एक्स-रे:</b> छाती का एक्स-रे अपलोड करना वैकल्पिक है लेकिन पुष्टि के लिए अनुशंसित है।
+                    </div>
+                {% elif session.lang == 'kn' %}
+                    <div style="background:#fff3cd; padding:10px; border-left:5px solid #ffc107; border-radius:8px;">
+                        <b>{{ survey.risk|capitalize }} ಅಪಾಯ ಪತ್ತೆಯಾಗಿದೆ – ಶಿಫಾರಸ್ಸು ಮಾಡಿದ ಎಕ್ಸ್-ರೇ:</b> ದೃಢೀಕರಣಕ್ಕಾಗಿ ಎಕ್ಸ್-ರೇ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಶಿಫಾರಸ್ಸು ಮಾಡಲಾಗಿದೆ.
+                    </div>
+                {% endif %}
+                <form action="{{ url_for('upload_xray') }}" method="post" enctype="multipart/form-data">
+                    {% if session.lang == 'en' %}
+                        <label><b>Optional: Upload Chest X-ray:</b></label><br>
+                        <input type="file" name="xray_file" accept="image/*" required>
+                        <button type="submit">Upload & Predict</button>
+                    {% elif session.lang == 'hi' %}
+                        <label><b>वैकल्पिक: छाती का एक्स-रे अपलोड करें:</b></label><br>
+                        <input type="file" name="xray_file" accept="image/*" required>
+                        <button type="submit">अपलोड करें और भविष्यवाणी करें</button>
+                    {% elif session.lang == 'kn' %}
+                        <label><b>ಐಚ್ಛಿಕ: ಛಾತಿಯ ಎಕ್ಸ್-ರೇ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ:</b></label><br>
+                        <input type="file" name="xray_file" accept="image/*" required>
+                        <button type="submit">ಅಪ್‌ಲೋಡ್ ಮಾಡಿ ಮತ್ತು ಊಹಿಸಿ</button>
+                    {% endif %}
+                </form>
+            {% else %}
+                <div style="background:#d1ecf1; padding:10px; border-left:5px solid #17a2b8; border-radius:8px;">
+                    ✅
+                    {% if session.lang == 'en' %} X-ray uploaded successfully.
+                    {% elif session.lang == 'hi' %} एक्स-रे सफलतापूर्वक अपलोड हुआ।
+                    {% elif session.lang == 'kn' %} ಎಕ್ಸ್-ರೇ ಯಶಸ್ವಿಯಾಗಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ. {% endif %}
+                </div>
+                <img class="xray-img" src="{{ url_for('serve_upload', fname=survey.xray_uploaded) }}" alt="Uploaded X-ray">
+                <p><b>Prediction:</b> {{ survey.xray_prediction }} ({{ survey.ml_conf }}%)</p>
+            {% endif %}
+        {% elif survey.risk == 'high' %}
+            {% if not survey.xray_uploaded %}
+                <div style="background:#f8d7da; padding:10px; border-left:5px solid #dc3545; border-radius:8px;">
+                    ⚠️
+                    {% if session.lang == 'en' %} High Risk Detected – Mandatory X-ray required.
+                    {% elif session.lang == 'hi' %} उच्च जोखिम पाया गया – अनिवार्य एक्स-रे आवश्यक है।
+                    {% elif session.lang == 'kn' %} ಹೆಚ್ಚಿನ ಅಪಾಯ ಪತ್ತೆಯಾಗಿದೆ – ಕಡ್ಡಾಯ ಎಕ್ಸ್-ರೇ ಅಗತ್ಯವಿದೆ. {% endif %}
+                </div>
+                <form action="{{ url_for('upload_xray') }}" method="post" enctype="multipart/form-data">
+                    {% if session.lang == 'en' %}
+                        <label><b>Upload Chest X-ray:</b></label><br>
+                        <input type="file" name="xray_file" accept="image/*" required>
+                        <button type="submit">Upload & Predict</button>
+                    {% elif session.lang == 'hi' %}
+                        <label><b>छाती का एक्स-रे अपलोड करें:</b></label><br>
+                        <input type="file" name="xray_file" accept="image/*" required>
+                        <button type="submit">अपलोड करें और भविष्यवाणी करें</button>
+                    {% elif session.lang == 'kn' %}
+                        <label><b>ಛಾತಿಯ ಎಕ್ಸ್-ರೇ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ:</b></label><br>
+                        <input type="file" name="xray_file" accept="image/*" required>
+                        <button type="submit">ಅಪ್‌ಲೋಡ್ ಮಾಡಿ ಮತ್ತು ಊಹಿಸಿ</button>
+                    {% endif %}
+                </form>
+            {% else %}
+                <div style="background:#d1ecf1; padding:10px; border-left:5px solid #17a2b8; border-radius:8px;">
+                    ✅
+                    {% if session.lang == 'en' %} X-ray uploaded successfully.
+                    {% elif session.lang == 'hi' %} एक्स-रे सफलतापूर्वक अपलोड हुआ।
+                    {% elif session.lang == 'kn' %} ಎಕ್ಸ್-ರೇ ಯಶಸ್ವಿಯಾಗಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ. {% endif %}
+                </div>
+                <img class="xray-img" src="{{ url_for('serve_upload', fname=survey.xray_uploaded) }}" alt="Uploaded X-ray">
+                <p><b>Prediction:</b> {{ survey.xray_prediction }} ({{ survey.ml_conf }}%)</p>
+            {% endif %}
+        {% endif %}
+    <!-- 🔥 MODEL ACCURACY SECTION -->
+<div class="section">
+    <h3>Model Performance</h3>
+
+    {% if acc_data %}
+        <p><b>Training Accuracy:</b> {{ acc_data.train_acc }}%</p>
+        <p><b>Validation Accuracy:</b> {{ acc_data.val_acc }}%</p>
+
+        <div style="background:#e9f7ef; padding:10px; border-left:5px solid #28a745; border-radius:8px;">
+            ✔ Model evaluated using CNN on chest X-ray dataset.
+        </div>
+    {% else %}
+        <p style="color:#856404;">
+            ⚠ Model performance data not available.
+        </p>
+    {% endif %}
+</div>
+
+
+    {% if survey.xray_uploaded %}
+    <div class="section">
+        <h3>Preprocessing Steps</h3>
+
+        <!-- 1. Original -->
+        <p><b>1. Original Image:</b></p>
+        <img class="xray-img" src="/static/uploads/{{ survey.xray_uploaded }}">
+
+        <!-- 2. Resized -->
+        <p><b>2. Resized (224×224):</b></p>
+        <img class="xray-img" src="{{ session.resized }}">
+
+        <!-- 3. Normalized -->
+        <p><b>3. Normalized:</b></p>
+        <img class="xray-img" src="{{ session.normalized }}">
+
+        <!-- 4. Grayscale -->
+        <p><b>4. Grayscale:</b></p>
+        <img class="xray-img" src="{{ session.gray }}">
+
+        <!-- 5. Edge Detection -->
+        <p><b>5. Edge Detection:</b></p>
+        <img class="xray-img" src="{{ session.edges }}">
+    </div>
+    {% endif %}
+    {% if session['paired_aug'] %}
+<div class="section">
+    <h3>Augmented Images (5)</h3>
+
+    <!-- Augmentation Steps -->
+    <div style="margin-bottom:20px; padding:10px; background:#f8f8f8; border-radius:10px;">
+        <h4>Augmentation Steps Applied</h4>
+        <ul style="line-height:1.6;">
+            <li><strong>Rotated +20°:</strong> Image rotated clockwise.</li>
+            <li><strong>Horizontal Flip:</strong> Mirrored left-to-right.</li>
+            <li><strong>Zoomed (1.2×):</strong> Slight zoom-in.</li>
+            <li><strong>Shifted (20px):</strong> Moved up/down/left/right.</li>
+            <li><strong>Sheared (15°):</strong> Tilt/diagonal distortion.</li>
+        </ul>
+    </div>
+
+    <!-- Display all augmented images with their names -->
+    <div style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center;">
+        {% for img, name in session['paired_aug'] %}
+        <div style="text-align:center; width:180px;">
+            <img src="{{ img }}" width="160"
+                 style="border:1px solid #ccc; border-radius:10px; box-shadow:0px 3px 8px rgba(0,0,0,0.2);">
+            <p style="margin-top:5px; font-weight:bold;">{{ name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+
+
+
+    <!-- Download PDF -->
+    <div class="section center-button">
+        {% if session.lang == 'en' %}
+            <form method="post"><button type="submit">Download PDF Report</button></form>
+        {% elif session.lang == 'hi' %}
+            <form method="post"><button type="submit">पीडीएफ रिपोर्ट डाउनलोड करें</button></form>
+        {% elif session.lang == 'kn' %}
+            <form method="post"><button type="submit">ಪಿಡಿಎಫ್ ವರದಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</button></form>
+        {% endif %}
+    </div>
+
+    <!-- Back to Dashboard -->
+    <div class="section center-button">
+        {% if session.lang == 'en' %}
+            <a href="{{ url_for('dashboard') }}" class="btn-link">⬅ Back to Dashboard</a>
+        {% elif session.lang == 'hi' %}
+            <a href="{{ url_for('dashboard') }}" class="btn-link">⬅ डैशबोर्ड पर वापस जाएं</a>
+        {% elif session.lang == 'kn' %}
+            <a href="{{ url_for('dashboard') }}" class="btn-link">⬅ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಹಿಂತಿರುಗಿ</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

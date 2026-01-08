@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+
+<div class="home-overlay text-center">
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h2 class="mb-3">Login</h2>
+    <p class="mb-4">Welcome back! Please login to continue.</p>
+
+    <!-- Language Selection -->
+    <form method="post" action="{{ url_for('set_lang') }}" class="mb-4">
+        <label for="lang" class="form-label d-block">Select Language:</label>
+        <select name="lang" id="lang" class="form-select mb-2">
+            <option value="en" {% if session.get('lang', 'en') == 'en' %}selected{% endif %}>English</option>
+            <option value="hi" {% if session.get('lang') == 'hi' %}selected{% endif %}>Hindi</option>
+            <option value="kn" {% if session.get('lang') == 'kn' %}selected{% endif %}>Kannada</option>
+        </select>
+        <button class="btn btn-secondary w-100 btn-sm">Set Language</button>
+    </form>
+
+    <!-- LOGIN FORM -->
+    <form method="post" action="{{ url_for('login') }}" class="mx-auto"
+          style="max-width: 400px;" autocomplete="off">
+
+        <!-- Hidden dummy input to stop Chrome autofill -->
+        <input type="text" name="fakeusernameremembered" style="display:none" autocomplete="off">
+        <input type="password" name="fakepasswordremembered" style="display:none" autocomplete="off">
+
+        <div class="mb-3 text-start">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username"
+                   name="username" autocomplete="new-username" required>
+        </div>
+
+        <div class="mb-3 text-start">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email"
+                   name="email" autocomplete="new-email" required>
+        </div>
+
+        <div class="mb-3 text-start">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password"
+                   name="password" autocomplete="new-password" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+
+    <p class="mt-3">
+        Don't have an account? <a href="{{ url_for('register') }}">Register here</a>
+    </p>
+</div>
+
+<style>
+body {
+    background: url("{{ url_for('static', filename='images/healthcare_bg.jpg') }}")
+                no-repeat center center fixed;
+    background-size: cover;
+    font-family: Arial, sans-serif;
+}
+.home-overlay {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 30px;
+    border-radius: 25px;
+    color: white;
+    max-width: 450px;
+    margin: 60px auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+.home-overlay .form-label {
+    color: white;
+}
+.home-overlay select.form-select {
+    background: white;
+    color: #000;
+}
+.home-overlay button.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+</style>
+
+{% endblock %}

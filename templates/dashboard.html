@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<style>
+    /* === Background and Page Setup === */
+    body {
+        background-image: url('/static/images/healthcare_bg.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* Removed large padding-top, container will handle spacing */
+    }
+
+    /* === Main Container === */
+    .dashboard-container {
+        max-width: 1000px;
+        margin: 80px auto 30px auto; /* top margin instead of padding */
+        padding: 25px;
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        position: relative;
+        z-index: 2;
+    }
+
+    /* === Header Section === */
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .dashboard-title {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dashboard-title h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0d6efd;
+        margin: 0;
+    }
+
+    .dashboard-title p {
+        font-size: 1rem;
+        color: #6c757d;
+        margin: 4px 0 0 0;
+    }
+
+    /* === Start New Survey Button === */
+    .btn-start-survey {
+        background-color: #0d6efd !important;
+        border: none;
+        font-weight: 600;
+        color: white !important;
+        padding: 10px 22px;
+        border-radius: 8px;
+        text-decoration: none;
+        position: relative;
+        z-index: 5;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn-start-survey:hover {
+        background-color: #0b5ed7 !important;
+        transform: translateY(-2px);
+    }
+
+    /* === Table Styling === */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table thead {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .table th, .table td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* === Buttons & Text === */
+    .btn-outline-success {
+        border: 1px solid #198754;
+        color: #198754;
+        padding: 4px 8px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .btn-outline-success:hover {
+        background-color: #198754;
+        color: white;
+    }
+
+    .no-report {
+        color: #dc3545;
+        font-weight: 500;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    /* === Responsive === */
+    @media (max-width: 600px) {
+        .dashboard-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .btn-start-survey {
+            align-self: stretch;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="dashboard-container">
+    <!-- === Header === -->
+    <div class="dashboard-header">
+        <div class="dashboard-title">
+            {% if session.lang == 'en' %}
+                <h2>My Dashboard</h2>
+                <p>Here you can view all your survey submissions and reports.</p>
+            {% elif session.lang == 'hi' %}
+                <h2>मेरा डैशबोर्ड</h2>
+                <p>यहां आप अपनी सभी सर्वेक्षण प्रविष्टियाँ और रिपोर्ट देख सकते हैं।</p>
+            {% elif session.lang == 'kn' %}
+                <h2>ನನ್ನ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</h2>
+                <p>ನೀವು ಇಲ್ಲಿ ನಿಮ್ಮ ಎಲ್ಲಾ ಸಮೀಕ್ಷಾ ದಾಖಲೆಗಳು ಮತ್ತು ವರದಿಗಳನ್ನು ವೀಕ್ಷಿಸಬಹುದು.</p>
+            {% endif %}
+        </div>
+
+        {% if session.lang == 'en' %}
+            <a class="btn btn-start-survey" href="{{ url_for('general') }}">Start New Survey</a>
+        {% elif session.lang == 'hi' %}
+            <a class="btn btn-start-survey" href="{{ url_for('general') }}">नई सर्वेक्षण प्रारंभ करें</a>
+        {% elif session.lang == 'kn' %}
+            <a class="btn btn-start-survey" href="{{ url_for('general') }}">ಹೊಸ ಸಮೀಕ್ಷೆ ಪ್ರಾರಂಭಿಸಿ</a>
+        {% endif %}
+    </div>
+
+    <!-- === Table === -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    {% if session.lang == 'en' %}
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Age Group</th>
+                        <th>Risk</th>
+                        <th>Report</th>
+                    {% elif session.lang == 'hi' %}
+                        <th>आईडी</th>
+                        <th>तारीख</th>
+                        <th>आयु वर्ग</th>
+                        <th>जोखिम</th>
+                        <th>रिपोर्ट</th>
+                    {% elif session.lang == 'kn' %}
+                        <th>ಐಡಿ</th>
+                        <th>ದಿನಾಂಕ</th>
+                        <th>ವಯಸ್ಸಿನ ಗುಂಪು</th>
+                        <th>ಅಪಾಯ</th>
+                        <th>ವರದಿ</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in submissions %}
+                    <tr>
+                        <td>{{ sub[0] }}</td>
+                        <td>{{ sub[1] }}</td>
+                        <td>{{ sub[2] }}</td>
+                        <td>{{ sub[3] }}</td>
+                        <td>
+                            {% if sub[4] %}
+                                {% if session.lang == 'en' %}
+                                    <a class="btn btn-sm btn-outline-success" href="{{ url_for('serve_upload', fname=sub[4]) }}">Download</a>
+                                {% elif session.lang == 'hi' %}
+                                    <a class="btn btn-sm btn-outline-success" href="{{ url_for('serve_upload', fname=sub[4]) }}">डाउनलोड करें</a>
+                                {% elif session.lang == 'kn' %}
+                                    <a class="btn btn-sm btn-outline-success" href="{{ url_for('serve_upload', fname=sub[4]) }}">ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</a>
+                                {% endif %}
+                            {% else %}
+                                {% if session.lang == 'en' %}
+                                    <span class="no-report">N/A</span>
+                                {% elif session.lang == 'hi' %}
+                                    <span class="no-report">उपलब्ध नहीं</span>
+                                {% elif session.lang == 'kn' %}
+                                    <span class="no-report">ಲಭ್ಯವಿಲ್ಲ</span>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

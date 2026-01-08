@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Manage Questions{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url('/static/images/healthcare_bg.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-container {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 25px;
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .dashboard-title {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dashboard-title h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0d6efd;
+        margin: 0;
+    }
+
+    .dashboard-title p {
+        font-size: 1rem;
+        color: #6c757d;
+        margin: 4px 0 0 0;
+    }
+
+    .btn-add-question {
+        background-color: #0d6efd;
+        border: none;
+        font-weight: 500;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .btn-add-question:hover {
+        background-color: #0b5ed7;
+    }
+
+    h4 {
+        margin-top: 20px;
+        color: #343a40;
+        font-weight: 800; /* bold category title */
+        font-size: 1.2rem;
+    }
+
+    ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    li {
+        padding: 10px 0;
+        border-bottom: 1px solid #f1f1f1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    li a.edit-btn {
+        background-color: #0d6efd;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        margin-right: 5px;
+        font-size: 0.85rem;
+    }
+
+    li a.edit-btn:hover {
+        background-color: #0b5ed7;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 5px;
+        font-size: 0.85rem;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 5px;
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="dashboard-title">
+            <h2>Manage Questions</h2>
+            <p>View, edit, or delete existing questions.</p>
+        </div>
+        <a class="btn btn-add-question" href="{{ url_for('admin_questions_add') }}">Add Question</a>
+    </div>
+
+    {% for cat, items in questions.items() %}
+        <h4>{{ cat|capitalize }}</h4>
+        <ul>
+            {% for q in items %}
+                <li>
+                    {{ q[1]['en'] }}
+                    <div class="action-buttons">
+                        <a class="edit-btn" href="{{ url_for('admin_questions_edit', category=cat, index=loop.index0) }}">Edit</a>
+                        <form method="post" action="{{ url_for('admin_questions_delete', category=cat, index=loop.index0) }}" style="display:inline;">
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</div>
+{% endblock %}
