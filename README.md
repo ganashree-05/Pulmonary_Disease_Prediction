@@ -7,11 +7,17 @@ The system is implemented as a Flask-based web application, allowing users to in
 🎯 Features
 
 1.Symptom-based disease prediction using ML rule-based weightage
+
 2.Chest X-ray image analysis using CNN (MobileNetV2)
+
 3.Image preprocessing and augmentation for better accuracy
+
 4.Real-time prediction with confidence percentage
+
 5.User authentication (Login/Register)
+
 SQLite database for storing user submissions
+
 Web-based interface using Flask
 
 🧠 Technologies Used
