@@ -1,7 +1,9 @@
 🫁 Pulmonary Disease Prediction using Machine Learning & Deep Learning
 
 📌 Project Overview
+
 Pulmonary diseases such as Pneumonia, COPD, Tuberculosis, and Bronchitis are serious respiratory conditions that require early and accurate diagnosis. This project presents an end-to-end intelligent system that predicts pulmonary diseases using a combination of symptom-based survey analysis (Machine Learning) and chest X-ray image analysis (Deep Learning – CNN).
+
 The system is implemented as a Flask-based web application, allowing users to input symptoms and upload chest X-ray images to receive disease predictions along with confidence scores.
 
 🎯 Features
@@ -16,39 +18,40 @@ The system is implemented as a Flask-based web application, allowing users to in
 
 5.User authentication (Login/Register)
 
-SQLite database for storing user submissions
+6.SQLite database for storing user submissions
 
-Web-based interface using Flask
+7.Web-based interface using Flask
 
 🧠 Technologies Used
 
-Programming & Frameworks
+1.Programming & Frameworks
  Python
  Flask
  TensorFlow / Keras
  NumPy, OpenCV
 
-Machine Learning & Deep Learning
+2.Machine Learning & Deep Learning
  CNN (Convolutional Neural Network)
  Transfer Learning using MobileNetV2
  Image Augmentation
 
-Database
+3.Database
  SQLite3
 
-Frontend
+4.Frontend
  HTML
  CSS
  Bootstrap
  Jinja2 Templates
 
 🧪 Dataset
- Chest X-ray Dataset
- Two classes:
+
+ 1.Chest X-ray Dataset
+ 2.Two classes:
   NORMAL
   PNEUMONIA
- Images are in JPEG format
- Preprocessed and augmented for training
+ 3.Images are in JPEG format
+ 4.Preprocessed and augmented for training
 
 ⚙️ System Architecture
 
