@@ -25,9 +25,13 @@ The system is implemented as a Flask-based web application, allowing users to in
 🧠 Technologies Used
 
 1.Programming & Frameworks
+
  Python
+ 
  Flask
+ 
  TensorFlow / Keras
+ 
  NumPy, OpenCV
 
 2.Machine Learning & Deep Learning
